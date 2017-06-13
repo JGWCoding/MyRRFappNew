@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#016938</color>
+    <color name="colorPrimaryDark">#016938</color>
+    <color name="colorAccent">#016938</color>
+
+
+    <color name="gray">#c4c4c4</color>
+    <color name="gray2">#E0E0E0</color>
+    <color name="gray3">#6D6D6D</color>
+    <color name="white">#ffffff</color>
+    <color name="powderblue">#b0e0e6</color><!--粉蓝色 -->
+    <color name="bg">#f4f4f4</color>
+    <color name="bg_yellow">#f2ffd4</color>
+    <color name="yellow2">#f9ffbf</color>
+    <color name="blue">#016938</color>
+    <color name="green">#8dc641</color>
+    <color name="yellow">#FDFF0C</color>
+    <color name="blue2">#269ADE</color>
+    <color name="blue3">#6B9039</color>
+    <color name="blue4">#A3BC81</color>
+    <color name="blue5">#86A55B</color>
+    <color name="translucent">#e0000000</color>
+    <color name="red">#FA0009</color>
+    <color name="mask_gray">#7FC0C0C0</color>
+
+    <color name="text_color">#646665</color>
+    <color name="gray_79">#797979</color>
+    <color name="gray_9f">#9F9F9F</color>
+</resources>

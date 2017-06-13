@@ -1,0 +1,95 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 25
+    buildToolsVersion "25.0.2"
+    defaultConfig {
+        applicationId "com.myrrfappnew"
+        minSdkVersion 14
+        targetSdkVersion 22
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    signingConfigs { //签名配置
+        release {
+            storeFile file("../RRFapp.jks")
+            storePassword "qqqqqq"
+            keyAlias "rrf"
+            keyPassword "qqqqqq"
+            v2SigningEnabled false
+        }
+    }
+    productFlavors { //打包生成的应用名
+        TCE931 {
+            buildConfigField "String", "API_ENV_PRODUCTION", '"931"'
+            manifestPlaceholders = [icon: "@drawable/icon931"]
+        }
+        TCE951 {
+            buildConfigField "String", "API_ENV_PRODUCTION", '"951"'
+            manifestPlaceholders = [icon: "@drawable/icon951"]
+        }
+        dev {
+            buildConfigField "String", "API_ENV_PRODUCTION", '"dev"'
+            manifestPlaceholders = [icon: "@mipmap/ic_launcher"]
+        }
+
+    }
+    buildTypes {//生成的app的打包类型
+        debug {
+            minifyEnabled false  //是否混淆
+            buildConfigField "String", "API_ENV_PRODUCTION", '"dev"'
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro' //使用混淆配置
+            signingConfig signingConfigs.release
+        }
+        release {
+            minifyEnabled true  //是否混淆
+            zipAlignEnabled true //使用zip压缩
+            shrinkResources true //收缩资源文件
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro' //使用混淆配置
+            signingConfig signingConfigs.release //使用签名配置
+//            applicationVariants.all { variant ->  //自定义生成签名打包名
+//                variant.outputs.each { output ->
+//                    def outputFile = output.outputFile
+//                    if (outputFile != null && outputFile.name.endsWith('.apk')) {
+//                        def fileName = ""
+//                        if (variant.productFlavors[0].name == ('TCE931')) {
+//                            fileName = "931_v${defaultConfig.versionName}_${defaultConfig.versionCode}_${releaseTime()}.apk"
+//                        } else if (variant.productFlavors[0].name == ('TCE951')) {
+//                            fileName = "951_v${defaultConfig.versionName}_${defaultConfig.versionCode}_${releaseTime()}.apk"
+//                        } else {
+//                            fileName = "dev_v${defaultConfig.versionName}_${defaultConfig.versionCode}_${releaseTime()}.apk"
+//                        }
+//                        output.outputFile = new File(outputFile.parent, fileName)
+//                    }
+//                }
+//            }
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    compile 'com.android.support:appcompat-v7:25.3.1'
+    //大部分兼容包--->使用这个可以兼容版本下的android程序
+    testCompile 'junit:junit:4.12'
+    //测试用的junit框架
+    compile 'org.xutils:xutils:3.3.40'
+    //xutils的引用
+//    compile 'com.github.bumptech.glide:glide:3.7.0'
+    //glide的引用,好像没用到过
+//    compile 'org.greenrobot:eventbus:3.0.0'
+    //eventbus的引用,好像也没用到过
+    compile 'com.github.chrisbanes:PhotoView:1.3.1'
+    //图片支持多点触控
+    compile 'com.dou361.dialogui:jjdxm-dialogui:1.0.1'
+    //dialog弹出框
+    compile 'com.tencent.bugly:crashreport:latest.release'
+    //bug上传日志 ,没怎么用
+    compile 'com.android.support:design:25.0.0'
+    //使用了这里面的控件,一般使用了,MaterialDesign设计
+    compile files('libs/ksoap2-android-assembly-3.6.2-jar-with-dependencies.jar') //请求网络框架
+}

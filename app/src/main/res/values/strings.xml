@@ -1,0 +1,34 @@
+<resources>
+    <string name="app_name">祥興新</string>
+    <string name="title">TCE931 - V%s</string>
+    <string name="title_951">TCE951 - V%s</string>
+    <string name="agreed_date">約定日期</string>
+    <string name="expire_date">到期日期</string>
+    <string name="finish_date">完工日期</string>
+    <string name="time">時間</string>
+    <string name="photos_taken">已拍\n照片\n(%d)張</string>
+    <string name="photos_sum">照片(%d)張</string>
+    <string name="report_finish">你已報未完工</string>
+    <string name="delete_dialog_tip">提示</string>
+    <string name="delete_dialog_message">是否刪除</string>
+    <string name="delete">刪除</string>
+    <string name="cancel">取消</string>
+    <string name="no_application_open_pdf">沒有應用程序能打開PDF</string>
+    <string name="has_new_version">發現新版本</string>
+    <string name="tip">提示</string>
+    <string name="download_success">下載完成</string>
+    <string name="download_failed">下載失敗</string>
+    <string name="update">更新</string>
+    <string name="downloading">正在下載</string>
+    <string name="please_present_first">請先報到場</string>
+    <string name="downloading_variable">正在下載%1$s</string>
+    <string name="start_download_variable">開始下載%1$s</string>
+    <string name="search_hint">請輸入CRN.NO</string>
+    <string name="submit_information">遞交資料</string>
+    <string name="please_choose">-----請選擇-----</string>
+    <string name="address">-----中文地址-----</string>
+    <string name="type">-----類別-----</string>
+    <string name="please_choose_address">請選擇中文地址</string>
+    <string name="please_choose_type">請選擇類別</string>
+    <string name="pair_white_head">配對 - CRN、白頭單</string>
+</resources>
