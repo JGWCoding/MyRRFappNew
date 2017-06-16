@@ -1,5 +1,9 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.jakewharton.butterknife'
 
+def releaseTime() {
+    return new Date().format("yyyy-MM-dd", TimeZone.getTimeZone("UTC"))
+}
 android {
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
@@ -48,22 +52,22 @@ android {
             shrinkResources true //收缩资源文件
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro' //使用混淆配置
             signingConfig signingConfigs.release //使用签名配置
-//            applicationVariants.all { variant ->  //自定义生成签名打包名
-//                variant.outputs.each { output ->
-//                    def outputFile = output.outputFile
-//                    if (outputFile != null && outputFile.name.endsWith('.apk')) {
-//                        def fileName = ""
-//                        if (variant.productFlavors[0].name == ('TCE931')) {
-//                            fileName = "931_v${defaultConfig.versionName}_${defaultConfig.versionCode}_${releaseTime()}.apk"
-//                        } else if (variant.productFlavors[0].name == ('TCE951')) {
-//                            fileName = "951_v${defaultConfig.versionName}_${defaultConfig.versionCode}_${releaseTime()}.apk"
-//                        } else {
-//                            fileName = "dev_v${defaultConfig.versionName}_${defaultConfig.versionCode}_${releaseTime()}.apk"
-//                        }
-//                        output.outputFile = new File(outputFile.parent, fileName)
-//                    }
-//                }
-//            }
+            applicationVariants.all { variant ->  //自定义生成签名打包名
+                variant.outputs.each { output ->
+                    def outputFile = output.outputFile
+                    if (outputFile != null && outputFile.name.endsWith('.apk')) {
+                        def fileName = ""
+                        if (variant.productFlavors[0].name == ('TCE931')) {
+                            fileName = "931_v${defaultConfig.versionName}_${defaultConfig.versionCode}_${releaseTime()}.apk"
+                        } else if (variant.productFlavors[0].name == ('TCE951')) {
+                            fileName = "951_v${defaultConfig.versionName}_${defaultConfig.versionCode}_${releaseTime()}.apk"
+                        } else {
+                            fileName = "dev_v${defaultConfig.versionName}_${defaultConfig.versionCode}_${releaseTime()}.apk"
+                        }
+                        output.outputFile = new File(outputFile.parent, fileName)
+                    }
+                }
+            }
         }
     }
 }
@@ -92,4 +96,6 @@ dependencies {
     compile 'com.android.support:design:25.0.0'
     //使用了这里面的控件,一般使用了,MaterialDesign设计
     compile files('libs/ksoap2-android-assembly-3.6.2-jar-with-dependencies.jar') //请求网络框架
+    compile 'com.jakewharton:butterknife:8.6.0'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.6.0'
 }

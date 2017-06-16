@@ -15,8 +15,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import static android.content.ContentValues.TAG;
 
@@ -26,15 +24,12 @@ import static android.content.ContentValues.TAG;
 
 public class HttpManager {
 
-
-    private volatile static HttpManager sInstance;
+    private static HttpManager sInstance;
     private Context context;
 
     private HttpManager(Context context) {
         this.context = context;
     }
-
-    private ExecutorService uploadThreadPool = Executors.newFixedThreadPool(1); //上传log
 
     public synchronized static HttpManager getInstance(Context context) {
         if (null == sInstance) {
@@ -43,50 +38,6 @@ public class HttpManager {
             }
         }
         return sInstance;
-    }
-
-    /**
-     * 上传log
-     *
-     * @param imgPath
-     * @param bean
-     */
-    public void uploadLog(String imgPath, final WorkLogBean bean) {
-        final SoapObject request = new SoapObject(UrlManager.NAME_SPACE, UrlManager.METHOD_UPLOAD_LOG);
-        request.addProperty("sid", AppUtils.getDeviceID(context));
-        request.addProperty("postTime", bean.getCreatDate() + " " + bean.getTime());
-        request.addProperty("crnNo", bean.getWorkId());
-        request.addProperty("buffer", imgPath);
-        if (bean.getDesc().contains("&"))
-            request.addProperty("attachmentData", bean.getWorkState() + "&" + bean.getDesc());
-        else
-            request.addProperty("attachmentData", bean.getWorkState() + "&" + bean.getDesc() + "&");
-        request.addProperty("syncTime", AppUtils.getCurrentDate() + " " + AppUtils.getCurrentTime());
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapSerializationEnvelope.VER11);
-                envelope.bodyOut = request;//由于是发送请求，所以是设置bodyOut
-                envelope.dotNet = true;//由于是.net开发的webservice，所以这里要设置为true
-                MyHttpTransport MyHttpTransport = new MyHttpTransport(UrlManager.WSDL_URI);
-                try {
-                    MyHttpTransport.call(UrlManager.ACTION_UPLOAD_LOG, envelope);
-                    String result = envelope.getResponse().toString();
-                    LogUtil.i("-------uploadLog result = " + result);
-                    String tagStart = "<Status>";
-                    String tagEnd = "</Status>";
-                    String status = result.substring(result.indexOf(tagStart) + 8, result.indexOf(tagEnd));
-                    if (status.equals("0")) {
-                        DbHelper.getInstance().actionUpdataStatus(bean.getId());
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
-
-
     }
 
     /**
@@ -132,7 +83,7 @@ public class HttpManager {
             request.addProperty("attachmentData", bean.getWorkState() + "&" + bean.getDesc() + "&");
         request.addProperty("syncTime", AppUtils.getCurrentDate() + " " + AppUtils.getCurrentTime());
         LogUtil.i("--------request uploadLog = " + request.toString());
-        uploadThreadPool.execute(new Runnable() {
+        ThreadUtils.pools.execute(new Runnable() {
             @Override
             public void run() {
                 SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapSerializationEnvelope.VER11);
@@ -172,7 +123,7 @@ public class HttpManager {
         request.addProperty("sync", info.getUpload());
         request.addProperty("paramers", "");
         LogUtil.i("--------request addWhiteHead = " + request.toString());
-        new Thread(new Runnable() {
+        ThreadUtils.pools.execute(new Runnable() {
             @Override
             public void run() {
                 SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapSerializationEnvelope.VER11);
@@ -190,13 +141,13 @@ public class HttpManager {
                         info.setUpload(1);
                         DbHelper.getInstance().updataWork(info);
 //                        EventBus.getDefault().post(new AddWhiteHeadEvent());
-                        //TODO 更新页面的信息
+                        //TODO 更新页面的信息 ---> 刷新白头单的页面 ---> 防止有*号难看业务逻辑不好
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
-        }).start();
+        });
 
     }
 
@@ -212,7 +163,7 @@ public class HttpManager {
         request.addProperty("matchTime", AppUtils.getCurrentDate() + " " + AppUtils.getCurrentTime());
         request.addProperty("paramers", "");
         LogUtil.i("--------request matchWhiteHead = " + request.toString());
-        new Thread(new Runnable() {
+        ThreadUtils.pools.execute(new Runnable() {
             @Override
             public void run() {
                 SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapSerializationEnvelope.VER11);
@@ -233,7 +184,7 @@ public class HttpManager {
                     e.printStackTrace();
                 }
             }
-        }).start();
+        });
 
     }
 
@@ -275,7 +226,7 @@ public class HttpManager {
             request.addProperty("attachmentData", bean.getWorkState() + "&" + bean.getDesc() + "&");
         request.addProperty("syncTime", AppUtils.getCurrentDate() + " " + AppUtils.getCurrentTime());
         LogUtil.i("--------request syncWhiteHead = " + request.toString());
-        new Thread(new Runnable() {
+        ThreadUtils.pools.execute(new Runnable() {
             @Override
             public void run() {
                 SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapSerializationEnvelope.VER11);
@@ -297,7 +248,7 @@ public class HttpManager {
                 }
 
             }
-        }).start();
+        });
 
     }
 

@@ -3,7 +3,6 @@ package com.myrrfappnew.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
@@ -36,7 +35,7 @@ public class ExplainActivity extends Activity implements OnClickListener {
         try {
             Intent intent = getIntent();
             String jpg = intent.getStringExtra("jpg");
-            if (jpg!=null){ web.loadUrl("file:///"+ Environment.getExternalStorageDirectory().getAbsolutePath() + "/Sdf/"+jpg);}
+            if (jpg!=null){ web.loadUrl("file:///"+jpg);}
             else {
                 web.loadUrl("file:///android_asset/explain.jpg");
             }

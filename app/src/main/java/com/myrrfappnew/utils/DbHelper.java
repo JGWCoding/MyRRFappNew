@@ -3,6 +3,7 @@ package com.myrrfappnew.utils;
 import android.content.Context;
 import android.database.Cursor;
 import android.text.TextUtils;
+
 import com.myrrfappnew.bean.WorkInfo;
 import com.myrrfappnew.bean.WorkLogBean;
 
@@ -18,6 +19,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static com.myrrfappnew.utils.FileUtils.context;
+
 
 /**
  * 数据库工具类
@@ -54,7 +56,7 @@ public class DbHelper {
                     // 不设置dbDir时, 默认存储在app的私有目录.
                     .setDbDir(FileUtils.getInstant().getDBFile()) // "sdcard"的写法并非最佳实践,
                     // 这里为了简单, 先这样写了.
-                    .setDbVersion(2)// 数据库版本号
+                    .setDbVersion(3)// 数据库版本号
                     .setDbOpenListener(new DbManager.DbOpenListener() {
                         @Override
                         public void onDbOpened(DbManager db) {
@@ -75,6 +77,22 @@ public class DbHelper {
                                                 e.printStackTrace();
                                             }
                                             break;
+                                        case 3:
+                                            try {
+                                                db.addColumn(WorkInfo.class, "type");
+                                                db.addColumn(WorkInfo.class, "isWhiteHead");
+                                                db.addColumn(WorkInfo.class,"jpgLink");
+                                            } catch (DbException e) {
+                                                e.printStackTrace();
+                                            }
+                                            break;
+                                    }
+                                    break;
+                                case 2:
+                                    try {
+                                        db.addColumn(WorkInfo.class,"jpgLink");
+                                    } catch (DbException e) {
+                                        e.printStackTrace();
                                     }
                                     break;
                             }
@@ -101,7 +119,7 @@ public class DbHelper {
             instance = new DbHelper();
         }
         return instance;
-   }
+    }
     public void deleteWorkInfo(WorkInfo workInfo) {
         try {
             if (workInfo != null)
@@ -125,7 +143,7 @@ public class DbHelper {
      */
     public String calToatal(int state) {
         try {
-           final long H= db.selector(WorkInfo.class).where("urgent", "=","H").and("state", "=", state).count();
+            final long H= db.selector(WorkInfo.class).where("urgent", "=","H").and("state", "=", state).count();
             final long U= db.selector(WorkInfo.class).where("urgent", "=","U").and("state", "=", state).count();
             final long E= db.selector(WorkInfo.class).where("urgent", "=","E").and("state", "=", state).count();
             final long N= db.selector(WorkInfo.class).where("urgent", "=","N").and("state", "=", state).count();
@@ -220,7 +238,7 @@ public class DbHelper {
     /**
      * 获取任务列表
      *
-     * @param state 任务状态 1未到场 2未完工 3.已完工
+     * @param state 任务状态 1 未到场0 2 未完工1 3.已完工2
      * @return
      */
     public List<WorkInfo> getWorkList(int state) {
@@ -261,14 +279,14 @@ public class DbHelper {
         return null;
     }
     public List<String> getWorkListUnuploadID(int state) {
-            ArrayList<String> list = new ArrayList<>();
+        ArrayList<String> list = new ArrayList<>();
         try {
             WhereBuilder whereBuilder = WhereBuilder.b();
             whereBuilder.and("isWhiteHead", "=", 0).or("isWhiteHead", "=", null);
             List<WorkInfo> workInfos = db.selector(WorkInfo.class).where("state", "=", state).and(whereBuilder).and("upload","=",0).findAll();
             if (workInfos != null) {
                 for (int i = 0; i < workInfos.size(); i++) {
-                        list.add(workInfos.get(i).getWorkId());
+                    list.add(workInfos.get(i).getWorkId());
                 }
             }
         } catch (DbException e) {
@@ -302,7 +320,21 @@ public class DbHelper {
             e.printStackTrace();
         }
     }
+    public void insertNetWorkDataJGP(WorkInfo info) { //插入一条数据
+        try {
+            WorkInfo dbInfo = getWorkById(info.getWorkId());
+            if (dbInfo == null) {
+                return;
+            } else {
+                dbInfo.setJpgLink(info.getJpgLink()); //更新这个字段
+                db.saveOrUpdate(dbInfo);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
+
+    }
 
     public void insertNetWorkData(WorkInfo info) { //插入一条数据
         try {

@@ -14,47 +14,47 @@ public class WorkInfo implements Serializable {
 //    <urgent>U</urgent><crnNo>54663910</crnNo><worker>8</worker><IEME>865623021897593</IEME><pdfLink>EMMS_Files\Business\WORRF\TXT\20170324\54663910 - RRF.pdf</pdfLink><AppointDate>2017-03-24</AppointDate><rrfTime>16:00:00-18:00:00</rrfTime><address>C.S.D. DEPTAL Qtrs at Butterfly Valley - Block G, Flat 702</address><appstatus>1</appstatus><appstatusdate></appstatusdate><jpgLink></jpgLink></RRF>
     @Column(name = "workId", property = "NOT NUll", isId = true)
     private String workId; //对应服务器的crnNo字段,一个唯一号
-    @Column(name = "date")
+    @Column(name = "date") //日期字段  例如 2017-01-01
     private String date;
     @Column(name = "urgent") //控制 H U等字段
     private String urgent;
-    @Column(name = "time")
+    @Column(name = "time")  //具体时间字段 例如 13:00
     private String time;
     @Column(name = "state")
-    private int state; //状态
+    private int state; //状态 --> 0是未到场 1是未完工 2是完工
 
     @Column(name = "arriveImgs")
-    private String arriveImgs;
+    private String arriveImgs;  //到场拍摄的图片字段     -->没用过的字段
     @Column(name = "completeImgs")
-    private String completeImgs;
+    private String completeImgs; //完工拍的图片字段      -->没用过的字段
     @Column(name = "notCompleteImgs")
-    private String notCompleteImgs;
+    private String notCompleteImgs; //未完工怕的图片字段  -->没用过的字段
     @Column(name = "address")
-    private String address;
+    private String address;  //地址字段
     @Column(name = "tag")
-    private String tag;
+    private String tag;  //标记字段
     @Column(name = "pdfLink")
-    private String pdfLink;
+    private String pdfLink; //pdf下载链接字段
     @Column(name = "upload")
-    private int upload = 1;
+    private int upload = 1; //标记是否上传字段 -->1标识为上传过  0表示为没有上传
 
 
     @Column(name = "jpgLink")
-    private String jpgLink ;
+    private String jpgLink ;//jpg下载链接字段
 
     @Column(name = "worker")
-    private String worker;
+    private String worker; //工人号
     @Column(name = "ieme")
-    private String ieme;
+    private String ieme; //手机唯一号
     @Column(name = "imgs")
-    private String imgs;
+    private String imgs; //图片地址的集合,多个地址时用","隔开
 
     @Column(name = "completeDate")
-    private String completeDate;
+    private String completeDate; //到场时间
     @Column(name = "type")
-    private String type;
+    private String type;    //类别  白头单中的类别字段
     @Column(name = "isWhiteHead")
-    private int isWhiteHead = 0;
+    private int isWhiteHead = 0; //是否为白头单  0代表为白头单   1为不是白头单
 
     @Override
     public String toString() {

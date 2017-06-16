@@ -10,6 +10,7 @@ import com.myrrfappnew.bean.WorkLogBean;
 import com.myrrfappnew.utils.AppUtils;
 import com.myrrfappnew.utils.DbHelper;
 import com.myrrfappnew.utils.HttpManager;
+import com.myrrfappnew.utils.ThreadUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -21,14 +22,14 @@ import java.util.TimerTask;
  * Created by Administrator on 23/3/2017.
  */
 
-public class SyncService extends Service {
+public class SyncService extends Service { //用于在后台运行
 
     private List<WorkLogBean> logList = new ArrayList<>();
     private List<WorkInfo> infoList = new ArrayList<>();
     private Timer timer;
     private TimerTask timerTask;
     private long delay = 1000 * 60 * 60;
-    private boolean isRun;
+    private static boolean isRun;
 
     @Nullable
     @Override
@@ -38,7 +39,14 @@ public class SyncService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (!isRun) syncDate();
+        if (!isRun) {
+            ThreadUtils.pools.submit(new Runnable() {
+                @Override
+                public void run() { //子线程中更新数据 --> 网络更新
+                    syncDate();
+                }
+            });
+        }
         return super.onStartCommand(intent, flags, startId);
 
     }
@@ -77,10 +85,9 @@ public class SyncService extends Service {
                         }
                     }
                 }
-
             }
             infoList = DbHelper.getInstance().getAllUnUploadWhiteHead();
-            if(infoList != null){
+            if (infoList != null) {
                 for (WorkInfo workInfo : infoList) {
                     HttpManager.getInstance(this).addWhiteHead(workInfo);
                 }

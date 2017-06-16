@@ -17,26 +17,6 @@ public class PresentComparator implements Comparator<WorkInfo> {
     public int compare(WorkInfo workInfo, WorkInfo t1) {
         String urgent1 = workInfo.getUrgent();
         String urgent2 = t1.getUrgent();
-//        int result = getValue(urgent1) - getValue(urgent2);
-//        int date = AppUtils.dateEquals(workInfo.getDate(), t1.getDate());
-//        if (result > 0) {
-//            return -1;
-//        } else if (result == 0) {
-//            if (date > 0) {
-//                return 1;
-//            } else if (date == 0) {
-//                if (workInfo.getIeme().equals(myIeme)) {
-//                    return -1;
-//                } else {
-//                    return 0;
-//                }
-//            } else {
-//                return -1;
-//            }
-//        } else {
-//            return 1;
-//        }
-
         if (getValue(urgent1) == getValue(urgent2)){
             if (AppUtils.getExpiredDay(workInfo.getDate()) == AppUtils.getExpiredDay(t1.getDate())){
                 if(AppUtils.isEmpty(workInfo.getIeme()))

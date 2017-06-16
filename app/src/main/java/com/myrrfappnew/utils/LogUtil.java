@@ -117,7 +117,6 @@ public class LogUtil {
     public static void wtf(String content) {
         if (!isDebug) return;
         String tag = generateTag();
-
         Log.wtf(tag, content);
     }
 
@@ -131,7 +130,6 @@ public class LogUtil {
     public static void wtf(Throwable tr) {
         if (!isDebug) return;
         String tag = generateTag();
-
         Log.wtf(tag, tr);
     }
 

@@ -20,7 +20,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:resizeableActivity="true"
+            android:resizeableActivity="false"
             android:name=".activity.MainActivity"
             android:configChanges="keyboard|screenSize|orientation|keyboardHidden"
             android:screenOrientation="landscape">
@@ -29,14 +29,24 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".activity.ExplainActivity"
+            android:configChanges="keyboard|screenSize|orientation|keyboardHidden"
+            android:screenOrientation="landscape">
+        </activity>
 
 
 
 
 
 
-
-
+        <receiver android:name=".broadcast.NetWorkReceiver">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+                <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
+                <action android:name="android.net.wifi.STATE_CHANGE" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

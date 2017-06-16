@@ -8,6 +8,6 @@ import org.ksoap2.transport.HttpTransportSE;
 
 public class MyHttpTransport extends HttpTransportSE {
     public MyHttpTransport(String url) {
-        super(url, 10000);
+        super(url, 5000);
     }
 }

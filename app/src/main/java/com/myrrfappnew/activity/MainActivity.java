@@ -1,7 +1,6 @@
 package com.myrrfappnew.activity;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -20,9 +19,9 @@ import android.widget.TextView;
 import com.myrrfappnew.BuildConfig;
 import com.myrrfappnew.R;
 import com.myrrfappnew.bean.WorkInfo;
+import com.myrrfappnew.fragment.MyFragmentManger;
 import com.myrrfappnew.seriver.SyncService;
 import com.myrrfappnew.utils.AppUtils;
-import com.myrrfappnew.utils.ToastUtils;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, RadioGroup.OnCheckedChangeListener {
 
@@ -48,17 +47,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private boolean isLog = false;//是否在log頁面
     private boolean isInit = true;//是否初始化
     private String workId;//id
+    //记录当前Fragment, -1是白头单 0是未到场 1是未完工 2是完工   -->index还与WorkInfo的state有一定关联
     private int index = -1;
     private WorkInfo info;
-    private TextView countView;
+    public static TextView countView;
+    private Intent intent;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         init(); //初始化一些视图
 //        CheckVersion.getInstance(this).checkVersion(); //检查版本是否可以更新
-        Intent intent = new Intent(this, SyncService.class);//开启后台上传 --->没有上传的数据进行上传
+        //开启后台上传 --->没有上传的数据进行上传
+        intent = new Intent(this, SyncService.class);
         startService(intent);
+        MyFragmentManger.showFragment(this,index);
     }
 
     private void init() {
@@ -125,7 +129,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void search() { //TODO 搜索本页面的数据
-        ToastUtils.showToast("你正在搜索");
+        MyFragmentManger.search(editSearch.getText().toString());
     }
 
     @Override
@@ -139,12 +143,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(new Intent(this, ExplainActivity.class));
                 break;
             case R.id.tv_refresh:     //TODO 点击刷新页面
-                Intent intent=new Intent();
-                intent.setAction(Intent.ACTION_VIEW);
-//                Intent.FLAG_ACTIVITY_LAUNCH_ADJACENT
-                intent.setFlags(Intent.FLAG_ACTIVITY_LAUNCH_ADJACENT);
-                intent.setData(Uri.parse("http://www.baidu.com"));
-                startActivity(intent);
+                MyFragmentManger.fragmentRefresh();
                 break;
             case R.id.iv_add:  //TODO 点击添加白头单
 
@@ -163,7 +162,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             ivArrow.setTranslationX(radioWhiteHead.getX() + radioWhiteHead.getWidth() / 2 - ivArrow.getWidth() / 2);
             index = -1;
             tvMatch.setVisibility(View.VISIBLE);
-            ivAdd.setVisibility(View.VISIBLE);
+           ivAdd.setVisibility(View.VISIBLE);
         }else if(checkedId == radioNotGo.getId()) {
             isInit = false;
             ivArrow.setTranslationX(radioNotGo.getX() + radioNotGo.getWidth() / 2 - ivArrow.getWidth() / 2);
@@ -181,9 +180,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             ivArrow.setTranslationX(radioLog.getX() + radioLog.getWidth() / 2 - ivArrow.getWidth() / 2);
             index = 3;
         }
+        MyFragmentManger.showFragment(this,index); //显示一个Fragment
         layoutSearch.setVisibility(View.VISIBLE);
         layoutCrn.setVisibility(View.GONE);
         layoutAddress.setVisibility(View.GONE);
         tvMatch.setVisibility(View.GONE);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (intent!=null) {
+            stopService(intent);
+        }
     }
 }

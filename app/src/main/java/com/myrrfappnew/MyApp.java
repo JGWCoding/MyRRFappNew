@@ -6,6 +6,7 @@ import android.os.Handler;
 import com.dou361.dialogui.DialogUIUtils;
 import com.myrrfappnew.utils.DbHelper;
 import com.myrrfappnew.utils.FileUtils;
+import com.myrrfappnew.utils.LogUtil;
 import com.myrrfappnew.utils.ToastUtils;
 
 import org.xutils.x;
@@ -26,6 +27,11 @@ public class MyApp extends Application {
         FileUtils.context = this;
         ToastUtils.init(this,true);
         DbHelper.getInstance();
+        LogUtil.init(true);
         handler = new Handler();
+
+    }
+    public static void executeMain(Runnable task) {
+        handler.post(task);
     }
 }

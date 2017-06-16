@@ -5,11 +5,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.Build;
+import android.os.Looper;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
@@ -31,6 +33,13 @@ import java.util.TimeZone;
  * 获取手机唯一串号
  */
 public class AppUtils {
+    /**是否在主线程中*/
+    public static boolean isMainThread(Context context) {
+       if(Thread.currentThread() == Looper.getMainLooper().getThread()) {
+           return true;
+       }
+        return false;
+    }
     /**获取设备串号*/
     public static String getDeviceID(Context context) {
         // 已经有摄像头权限了，可以使用该权限完成app的相应的操作了
@@ -50,8 +59,8 @@ public class AppUtils {
 //        return "861695032114865";
 //        return "354485061431925";
 //        return  "867106022928243";
-        return  "869161021936471";
-//        return deviceId;   //TODO 这里返回手机唯一码
+//        return  "869161021936471";
+        return deviceId;   //TODO 这里返回手机唯一码
     }
 
 
@@ -204,7 +213,6 @@ public class AppUtils {
      * @return
      */
     public static Intent openPDF(String param) {
-        LogUtil.i("open22222222222222.................................................");
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         Uri uri = Uri.fromFile(new File(param));
@@ -246,7 +254,7 @@ public class AppUtils {
 
     /**
      * 判断过期多少天
-     *
+     * 得到离现在过了多少天
      * @param fromDate
      */
     @SuppressLint("SimpleDateFormat")
@@ -332,7 +340,16 @@ public class AppUtils {
         }
         return false;
     }
-
+    /**
+     * 判断是否是平板
+     * @param context
+     * @return  平板返回 True，手机返回 False
+     */
+    public static boolean isPad(Context context) {
+        return (context.getResources().getConfiguration().screenLayout
+                & Configuration.SCREENLAYOUT_SIZE_MASK)
+                >= Configuration.SCREENLAYOUT_SIZE_LARGE;
+    }
     /**
      * 判断当前网络是否可用
      *
