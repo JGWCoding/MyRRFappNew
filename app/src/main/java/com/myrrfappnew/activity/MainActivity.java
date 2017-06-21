@@ -73,8 +73,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (BuildConfig.API_ENV_PRODUCTION.equals("951")) {
             titleTv.setText(getString(R.string.title_951, AppUtils.getVersion(this)));
             ivLogo.setImageResource(R.drawable.ic_logo951);
-        } else {
+        } else if(BuildConfig.API_ENV_PRODUCTION.equals("931")){
             titleTv.setText(getString(R.string.title, AppUtils.getVersion(this)));
+            ivLogo.setImageResource(R.drawable.ic_logo931);
+        }else {
+            titleTv.setText("dev-测试");
             ivLogo.setImageResource(R.drawable.ic_logo931);
         }
         tvExplain = (TextView) findViewById(R.id.tv_explain);

@@ -11,7 +11,6 @@ import com.myrrfappnew.seriver.SyncService;
 import com.myrrfappnew.utils.AppUtils;
 import com.myrrfappnew.utils.DbHelper;
 import com.myrrfappnew.utils.DialogUtils;
-import com.myrrfappnew.utils.LogUtil;
 import com.myrrfappnew.utils.ToastUtils;
 
 import java.util.List;
@@ -47,7 +46,6 @@ public class WhiteHeadFragment extends BaseFragment {
     @Override
     protected void threadGetData() { //得到数据  ---> 在子线程中 定要注意要在主线程中更新视图
         list = DbHelper.getInstance().getAllWhiteHead();
-
     }
 
     @Override
@@ -93,7 +91,7 @@ public class WhiteHeadFragment extends BaseFragment {
             };
         listView.setAdapter(adapter);
         } else {
-            adapter.notifyDataSetChanged();
+            adapter.setDataChange(list);
         }
 
     }

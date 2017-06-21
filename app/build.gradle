@@ -45,6 +45,15 @@ android {
             buildConfigField "String", "API_ENV_PRODUCTION", '"dev"'
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro' //使用混淆配置
             signingConfig signingConfigs.release
+            applicationVariants.all { variant ->
+                variant.outputs.each { output ->
+                    def outputFile = output.outputFile
+                    if (outputFile != null && outputFile.name.endsWith('.apk')) {
+                        def fileName = "dev_测试_v${defaultConfig.versionName}_${defaultConfig.versionCode}_${releaseTime()}.apk"
+                        output.outputFile = new File(outputFile.parent, fileName)
+                    }
+                }
+            }
         }
         release {
             minifyEnabled true  //是否混淆

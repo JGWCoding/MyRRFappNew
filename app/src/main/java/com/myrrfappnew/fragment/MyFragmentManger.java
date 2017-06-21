@@ -39,10 +39,12 @@ public class MyFragmentManger {
                 case 1:
                     fragment = new NotFinishFragment();
                     break;
-//                case 2:
-//                    break;
-//                case 3:
-//                    break;
+                case 2:
+                    fragment = new FinishFragment();
+                    break;
+                case 3:
+                    fragment = new WorkLogFragment();
+                    break;
 //                case 4:
 //                    break;
                 default:
@@ -52,7 +54,7 @@ public class MyFragmentManger {
         } else {
             ft.show(fragment);
         }
-        if (currentFragment != null) {
+        if (currentFragment != null && currentFragment!=fragment) {
             ft.hide(currentFragment);
         }
         ft.commit();

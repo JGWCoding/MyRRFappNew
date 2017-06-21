@@ -44,7 +44,7 @@ import static com.myrrfappnew.MyApp.handler;
  * Created by Administrator on 2017/6/14.
  */
 
-public abstract class BaseFragment extends Fragment {
+public abstract class BaseFragment extends Fragment{
 
     private Dialog dialog;
     private Runnable task;
@@ -70,8 +70,8 @@ public abstract class BaseFragment extends Fragment {
     }
 
     protected abstract View getMyView();   // TODO 給予一个视图  ---> 交给子类必须实现
-
-    protected void triggerRefresh() { //触发刷新页面
+    //触发刷新页面
+    protected void triggerRefresh() {
         showDialog(); //显示加载中页面
         if (task==null) {
             task = new Runnable() {
@@ -96,9 +96,8 @@ public abstract class BaseFragment extends Fragment {
         }
         ThreadUtils.pools.submit(task);
     }
-
+    //点击搜索按钮之后显示的数据
     protected void search(final String key) {
-
         task = new Runnable() {
             @Override
             public void run() {

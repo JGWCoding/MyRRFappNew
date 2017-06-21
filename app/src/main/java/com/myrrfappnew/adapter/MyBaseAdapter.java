@@ -33,8 +33,13 @@ public abstract class MyBaseAdapter<T> extends BaseAdapter {
         return data.size();
     }
 
+    public void setDataChange(List<T> data) {
+        this.data = data;
+        this.notifyDataSetChanged();
+    }
     @Override
     public T getItem(int position) {
+        this.notifyDataSetChanged();
         return data.get(position);
     }
 
@@ -52,7 +57,7 @@ public abstract class MyBaseAdapter<T> extends BaseAdapter {
             holder = new Holder(convertView);
             convertView.setTag(holder);
         }else {
-            holder = (Holder) convertView.getTag();
+            holder = (Holder) convertView.getTag();  //不能使用静态内部类,不然全是同样的视图
         }
         dataAndView(holder,getItem(position));
         return convertView;
@@ -61,10 +66,10 @@ public abstract class MyBaseAdapter<T> extends BaseAdapter {
     protected abstract void dataAndView(Holder holder, T item);
 
 
-    protected class Holder {
+    protected  class Holder {
         Holder holder;
         View rootView;
-        SparseArray<View> viewList = new SparseArray();
+    SparseArray<View>  viewList = new SparseArray();
         public Holder(View rootView) {
             this.rootView = rootView;
         }
@@ -77,7 +82,6 @@ public abstract class MyBaseAdapter<T> extends BaseAdapter {
                 return itemView;
             }
         }
-
         public TextView setTxetView(int viewId,String content) {
             TextView textView= (TextView) getView(viewId);
             textView.setText(content);

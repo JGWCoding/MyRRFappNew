@@ -72,6 +72,7 @@ public class NotFinishFragment extends BaseFragment implements AdapterView.OnIte
                                 public void run() {
                                     //显示加载中 --->下载 完成后自动跳转到打开 -->失败提示下-->关闭的显示条
                                     final String fileName = downLoadFile(info.getPdfLink());
+                                    if(fileName!=null)
                                     MyApp.handler.post(new Runnable() {
                                         @Override
                                         public void run() {
@@ -86,6 +87,7 @@ public class NotFinishFragment extends BaseFragment implements AdapterView.OnIte
                         @Override
                         public void onClick(View v) {
                             final String fileName = downLoadFile(info.getPdfLink());
+                            if(fileName!=null)
                             MyApp.handler.post(new Runnable() {
                                 @Override
                                 public void run() {
@@ -101,7 +103,7 @@ public class NotFinishFragment extends BaseFragment implements AdapterView.OnIte
             };
             listView.setAdapter(adapter);
         } else {
-            adapter.notifyDataSetChanged();
+            adapter.setDataChange(list);
         }
     }
 

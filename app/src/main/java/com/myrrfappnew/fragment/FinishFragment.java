@@ -31,7 +31,7 @@ public class FinishFragment extends BaseFragment implements AdapterView.OnItemCl
 
     @Override
     protected View getMyView() {
-        View view = View.inflate(getActivity(), R.layout.fragment_not_arrive, null);
+        View view = View.inflate(getActivity(), R.layout.fragment_finish, null);
         listView = (ListView) view.findViewById(R.id.list_view);
         listView.setOnItemClickListener(this);
         return view;
@@ -39,15 +39,15 @@ public class FinishFragment extends BaseFragment implements AdapterView.OnItemCl
 
     @Override
     protected void searchData(String key) {
-        list = DbHelper.getInstance().searchWorkList(Constant.notArrive, key);
+        list = DbHelper.getInstance().searchWorkList(Constant.finish, key);
     }
 
     @Override
     protected void threadGetData() { //子线程中加载数据
         if (Constant.isNetWorkGetData) {
-            queryRRFAll(Constant.notArrive);
+            queryRRFAll(Constant.finish);
         }
-        list = DbHelper.getInstance().getWorkList(Constant.notArrive);
+        list = DbHelper.getInstance().getWorkList(Constant.finish);
         if (list != null) {
             if (list.size() > 1)
                 Collections.sort(list, new PresentComparator(imei));
@@ -57,25 +57,21 @@ public class FinishFragment extends BaseFragment implements AdapterView.OnItemCl
     @Override
     protected void mainRefresh() { //刷新数据后的视图
         if (adapter == null) {
-            adapter = new MyBaseAdapter<WorkInfo>(getActivity(), R.layout.fragment_not_arrive_item, list) {
+            adapter = new MyBaseAdapter<WorkInfo>(getActivity(), R.layout.fragment_finish_item, list) {
                 @Override
                 protected void dataAndView(Holder holer, final WorkInfo info) {
                     holer.setTxetView(R.id.work_id_tv, info.getUrgent() + " " + info.getWorkId() + "(" + info.getWorker() + ")");
                     holer.setTxetView(R.id.date_tv, info.getDate());
                     holer.setTxetView(R.id.address_tv, info.getAddress());
-                    String time = info.getTime();
-                    if (!AppUtils.isEmpty(time)) {
-                        holer.setTxetView(R.id.time_tv, time.length() > 5 ? time.substring(0, 5) : time);
-                    }
                     holer.getView(R.id.pdf_tv).setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-
                             ThreadUtils.pools.execute(new Runnable() {
                                 @Override
                                 public void run() {
                                     //显示加载中 --->下载 完成后自动跳转到打开 -->失败提示下-->关闭的显示条
                                     final String fileName = downLoadFile(info.getPdfLink());
+                                    if(fileName!=null)
                                     MyApp.handler.post(new Runnable() {
                                         @Override
                                         public void run() {
@@ -90,14 +86,16 @@ public class FinishFragment extends BaseFragment implements AdapterView.OnItemCl
                         @Override
                         public void onClick(View v) {
                             final String fileName = downLoadFile(info.getPdfLink());
-                            MyApp.handler.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Intent intent = new Intent(getActivity(), ExplainActivity.class);
-                                    intent.putExtra("jpg",fileName);
-                                    startActivity(intent);
-                                }
-                            });
+                            if(fileName!=null) {
+                                MyApp.handler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Intent intent = new Intent(getActivity(), ExplainActivity.class);
+                                        intent.putExtra("jpg", fileName);
+                                        startActivity(intent);
+                                    }
+                                });
+                            }
                         }
                     });
                     holer.getView(R.id.iv_star).setVisibility(info.getUpload() == 1 ? View.GONE : View.VISIBLE);
@@ -106,7 +104,7 @@ public class FinishFragment extends BaseFragment implements AdapterView.OnItemCl
             };
             listView.setAdapter(adapter);
         } else {
-            adapter.notifyDataSetChanged();
+            adapter.setDataChange(list);
         }
     }
 

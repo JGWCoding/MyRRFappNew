@@ -2,10 +2,11 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:paddingLeft="10dp"
     android:paddingRight="10dp"
-    android:paddingTop="5dp"
-    android:orientation="vertical">
+    android:paddingTop="5dp">
+
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -22,17 +23,9 @@
 
         <TextView
             android:id="@+id/tv_date"
-            android:layout_width="160dp"
+            android:layout_width="130dp"
             android:layout_height="wrap_content"
-            android:text="約定日期"
-            android:textColor="@color/blue"
-            android:textSize="18sp" />
-
-        <TextView
-            android:id="@+id/tv_time"
-            android:layout_width="60dp"
-            android:layout_height="wrap_content"
-            android:text="時間"
+            android:text="完工日期"
             android:textColor="@color/blue"
             android:textSize="18sp" />
 
@@ -40,8 +33,7 @@
             android:id="@+id/tv_address"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1.2"
-            android:singleLine="true"
+            android:layout_weight="490"
             android:text="中文地址"
             android:textColor="@color/blue"
             android:textSize="18sp" />
@@ -52,5 +44,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="5dp"
+        android:layout_weight="1.0"
         android:dividerHeight="1dp" />
+
 </LinearLayout>
