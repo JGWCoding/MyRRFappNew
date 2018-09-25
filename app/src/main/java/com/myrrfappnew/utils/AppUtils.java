@@ -55,11 +55,6 @@ public class AppUtils {
         if (deviceId == null) {
             deviceId = "noimei" + telephonyManager.getNetworkOperatorName(); //获取网络进网许可证号
         }
-//        return "861695033281275";
-//        return "861695032114865";
-//        return "354485061431925";
-//        return  "867106022928243";
-//        return  "869161021936471";
         return deviceId;   //TODO 这里返回手机唯一码
     }
 
