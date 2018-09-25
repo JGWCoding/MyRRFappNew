@@ -34,12 +34,17 @@
             android:configChanges="keyboard|screenSize|orientation|keyboardHidden"
             android:screenOrientation="landscape">
         </activity>
+        <activity
+            android:name=".activity.PhotoActivity"
+            android:theme="@style/TranslucentTheme"
+            android:configChanges="keyboard|screenSize|orientation|keyboardHidden"
+            android:screenOrientation="landscape">
+        </activity>
 
 
 
 
-
-
+        <service android:name=".seriver.SyncService"></service>
         <receiver android:name=".broadcast.NetWorkReceiver">
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />

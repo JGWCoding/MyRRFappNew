@@ -49,7 +49,7 @@ public abstract class BaseFragment extends Fragment{
     private Dialog dialog;
     private Runnable task;
     public String imei; //手机唯一号
-
+        //当没有上传的在当前页面上传了 -->需要去除上传标识 -->刷新页面
     // TODO  --> 管理我的Fragment 使用hide show展示Fragment --->添加进栈按返回键可回退 ---> 当有网上传了数据更新页面刷新
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -71,7 +71,7 @@ public abstract class BaseFragment extends Fragment{
 
     protected abstract View getMyView();   // TODO 給予一个视图  ---> 交给子类必须实现
     //触发刷新页面
-    protected void triggerRefresh() {
+    public void triggerRefresh() {
         showDialog(); //显示加载中页面
         if (task==null) {
             task = new Runnable() {

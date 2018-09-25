@@ -205,7 +205,22 @@ public class AppUtils {
         DateFormat df = new SimpleDateFormat("HH:mm:ss");
         return df.format(new Date());
     }
-
+    @SuppressLint("SimpleDateFormat")
+    public static String dateChange(String fromDate) {
+        if (isEmpty(fromDate))
+            return "";
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            sdf.setTimeZone(TimeZone.getTimeZone("GTM+8"));
+            Date d2 = sdf.parse(fromDate);
+            SimpleDateFormat sdf1 = new SimpleDateFormat("dd-MM-yyyy");
+            sdf1.setTimeZone(TimeZone.getTimeZone("GTM+8"));
+            return sdf1.format(d2);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return fromDate;
+    }
     /**
      * 使用第三方應用打開文件
      *
@@ -354,7 +369,7 @@ public class AppUtils {
      * 判断当前网络是否可用
      *
      * @param context
-     * @return
+     * @return 返回true为有网,false为没网
      */
     public static boolean isNetworkAvailable(Context context) {
         return getNetworkType(context) != 0;

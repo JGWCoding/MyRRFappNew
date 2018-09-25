@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="address">
+        <item>公園室內</item>
+        <item>運動場</item>
+        <item>泳池</item>
+        <item>圖書館</item>
+        <item>街市</item>
+        <item>熟食中心</item>
+        <item>公厠</item>
+        <item>垃圾站</item>
+        <item>醫院</item>
+        <item>診所</item>
+        <item>社區會堂</item>
+        <item>學校</item>
+        <item>政府合署</item>
+        <item>寫字樓</item>
+        <item>法庭</item>
+        <item>裁判署</item>
+        <item>郵局</item>
+        <item>警署</item>
+        <item>消防局</item>
+        <item>救護站</item>
+        <item>懲教所</item>
+        <item>宿舍</item>
+        <item>其他</item>
+    </string-array>
+    <string-array name="type">
+        <item>木工,Carp</item>
+        <item>污水,Drai</item>
+        <item>非工,EAtt</item>
+        <item>玻璃,Glaz</item>
+        <item>小五金,Iron</item>
+        <item>雜項,Misc</item>
+        <item>泥水,Plas</item>
+        <item>水喉,Plum</item>
+        <item>鐵工,SMet</item>
+        <item>百頁簾,VBli</item>
+    </string-array>
+</resources>

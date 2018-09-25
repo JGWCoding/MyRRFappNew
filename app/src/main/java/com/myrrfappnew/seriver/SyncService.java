@@ -10,9 +10,9 @@ import com.myrrfappnew.bean.WorkLogBean;
 import com.myrrfappnew.utils.AppUtils;
 import com.myrrfappnew.utils.DbHelper;
 import com.myrrfappnew.utils.HttpManager;
+import com.myrrfappnew.utils.LogUtil;
 import com.myrrfappnew.utils.ThreadUtils;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
@@ -62,31 +62,32 @@ public class SyncService extends Service { //用于在后台运行
                 syncDate();
             }
         };
-        timer.schedule(timerTask, 1000, delay);
+        timer.schedule(timerTask, 100, delay);
     }
 
     public void syncDate() {  //开始上传数据 --> 没有上传过的
+        LogUtil.e("====+++开始同步了");
         isRun = true;
         if (AppUtils.isNetworkAvailable(this)) {
             logList = DbHelper.getInstance().getLog();
+            if(logList==null) {
+                LogUtil.e("====+++"+"null为空了");
+            }
             if (logList != null) {
                 for (WorkLogBean workLogBean : logList) {
+                    LogUtil.e("====+++"+workLogBean.toString());
                     if (workLogBean.getUpload() == 0) {
                         HttpManager.getInstance(this).uploadLog(workLogBean);
                     } else {
                         if (workLogBean.getWorkState() == 2) {
                             int expiredDay = AppUtils.getExpiredDayWithLog(workLogBean.getCreatDate());
-                            if (expiredDay >= 10) {
-                                if (!AppUtils.isEmpty(workLogBean.getImgUrls())) {
-                                    File file = new File(workLogBean.getImgUrls());
-                                    if (file.exists()) file.delete();
-                                }
+                            if (expiredDay >= 10) {  //过期10天删除这个照片
                             }
                         }
                     }
                 }
             }
-            infoList = DbHelper.getInstance().getAllUnUploadWhiteHead();
+            infoList = DbHelper.getInstance().getAllUnUploadWhiteHead(); //找所有未上传的白头单进行上传
             if (infoList != null) {
                 for (WorkInfo workInfo : infoList) {
                     HttpManager.getInstance(this).addWhiteHead(workInfo);

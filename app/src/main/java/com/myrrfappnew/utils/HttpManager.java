@@ -4,8 +4,12 @@ import android.content.Context;
 import android.util.Base64;
 import android.util.Log;
 
+import com.myrrfappnew.MyApp;
 import com.myrrfappnew.bean.WorkInfo;
 import com.myrrfappnew.bean.WorkLogBean;
+import com.myrrfappnew.fragment.BaseFragment;
+import com.myrrfappnew.fragment.MyFragmentManger;
+import com.myrrfappnew.fragment.WhiteHeadFragment;
 
 import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
@@ -57,18 +61,21 @@ public class HttpManager {
         if (!AppUtils.isEmpty(bean.getImgUrls())) {
             try {
                 File file = new File(bean.getImgUrls());
-                if (!file.exists()) return;
-                Log.e(TAG, "uploadLog: "+file.getAbsolutePath() +"====="+bean.getImgUrls());
-                FileInputStream stream = new FileInputStream(file);
-                ByteArrayOutputStream out = new ByteArrayOutputStream(1000);
-                byte[] b = new byte[1000];
-                int n;
-                while ((n = stream.read(b)) != -1)
-                    out.write(b, 0, n);
-                stream.close();
-                out.close();
-                String base64 = Base64.encodeToString(out.toByteArray(), Base64.NO_WRAP);
-                request.addProperty("buffer", base64);
+                if (file.exists()) {
+                    Log.e(TAG, "uploadLog: " + file.getAbsolutePath() + "=====" + bean.getImgUrls());
+                    FileInputStream stream = new FileInputStream(file);
+                    ByteArrayOutputStream out = new ByteArrayOutputStream(1000);
+                    byte[] b = new byte[1000];
+                    int n;
+                    while ((n = stream.read(b)) != -1)
+                        out.write(b, 0, n);
+                    stream.close();
+                    out.close();
+                    String base64 = Base64.encodeToString(out.toByteArray(), Base64.NO_WRAP);
+                    request.addProperty("buffer", base64);
+                }else {
+                    request.addProperty("buffer", "");
+                }
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
                 request.addProperty("buffer", "");
@@ -121,7 +128,7 @@ public class HttpManager {
         request.addProperty("createDate", info.getDate());
         request.addProperty("uploadTime", AppUtils.getCurrentDate() + " " + AppUtils.getCurrentTime());
         request.addProperty("sync", info.getUpload());
-        request.addProperty("paramers", "");
+        request.addProperty("paramers",info.getNotCompleteImgs());
         LogUtil.i("--------request addWhiteHead = " + request.toString());
         ThreadUtils.pools.execute(new Runnable() {
             @Override
@@ -140,8 +147,15 @@ public class HttpManager {
                     if (status.equals("0")) {
                         info.setUpload(1);
                         DbHelper.getInstance().updataWork(info);
-//                        EventBus.getDefault().post(new AddWhiteHeadEvent());
                         //TODO 更新页面的信息 ---> 刷新白头单的页面 ---> 防止有*号难看业务逻辑不好
+                        MyApp.handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (MyFragmentManger.currentFragment instanceof WhiteHeadFragment) {
+                                    ((BaseFragment) (MyFragmentManger.currentFragment)).triggerRefresh();
+                                }
+                            }
+                        });
                     }
                 } catch (Exception e) {
                     e.printStackTrace();

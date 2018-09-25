@@ -2,15 +2,20 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
+    android:orientation="vertical"
     android:paddingBottom="3dp"
-    android:background="@drawable/item_selector"
     android:paddingTop="3dp">
+
+    <LinearLayout
+        android:id="@+id/item_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/item_selector">
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1.5"
+            android:layout_weight="1.2"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
@@ -62,32 +67,30 @@
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_star_blue"
                 android:visibility="gone" />
-
-            <TextView
-                android:id="@+id/tv_tag"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:singleLine="true"
-                android:text="*"
-                android:textColor="@color/text_color"
-                android:textSize="20sp"
-                android:visibility="gone" />
         </LinearLayout>
 
         <TextView
             android:id="@+id/tv_address"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="0.8"
+            android:layout_weight="0.6"
             android:singleLine="true"
             android:textColor="@color/text_color"
             android:textSize="20sp" />
-
+        <TextView
+            android:id="@+id/tv_remark"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.6"
+            android:singleLine="true"
+            android:textColor="@color/text_color"
+            android:textSize="20sp"
+            android:text="備註"/>
         <TextView
             android:id="@+id/tv_type"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="0.5"
+            android:layout_weight="0.3"
             android:singleLine="true"
             android:textColor="@color/text_color"
             android:textSize="20sp" />
@@ -96,8 +99,9 @@
             android:id="@+id/tv_state"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="0.5"
+            android:layout_weight="0.3"
             android:singleLine="true"
             android:textColor="@color/text_color"
             android:textSize="20sp" />
     </LinearLayout>
+</LinearLayout>

@@ -3,10 +3,6 @@ package com.myrrfappnew.utils;
 
 import com.myrrfappnew.BuildConfig;
 
-/**
- * author by john
- */
-
 public class UrlManager {
     public static final String WSDL_URI; //地址
     public static final String CHECK_VERSION; //检验的版本地址

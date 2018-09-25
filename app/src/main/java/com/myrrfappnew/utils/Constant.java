@@ -7,6 +7,7 @@ import android.os.Environment;
  */
 
 public class Constant {
+
     public static boolean isNetWorkGetData = true;
     public final static int notArrive = 0;
     public final static int notFinish = 1;

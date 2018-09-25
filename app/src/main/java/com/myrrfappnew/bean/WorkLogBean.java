@@ -27,6 +27,20 @@ public class WorkLogBean {
     @Column(name = "desc")
     private String desc;
 
+    @Override
+    public String toString() {
+        return "WorkLogBean{" +
+                "id=" + id +
+                ", workId='" + workId + '\'' +
+                ", workState=" + workState +
+                ", creatDate='" + creatDate + '\'' +
+                ", imgUrls='" + imgUrls + '\'' +
+                ", upload=" + upload +
+                ", time='" + time + '\'' +
+                ", tag='" + tag + '\'' +
+                ", desc='" + desc + '\'' +
+                '}';
+    }
 
     public String getTime() {
         return time;

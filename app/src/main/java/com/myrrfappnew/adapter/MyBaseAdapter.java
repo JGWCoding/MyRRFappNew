@@ -8,6 +8,9 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import com.myrrfappnew.utils.LogUtil;
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -48,28 +51,36 @@ public abstract class MyBaseAdapter<T> extends BaseAdapter {
         return position;
     }
 
-    //convertView 划出屏幕的view对象
+    ArrayList<Integer> arrayList = new ArrayList<Integer>();
+    int count;
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+        long startTime = System.nanoTime();
         Holder holder = null;
         if (convertView == null) {
-            convertView = View.inflate(context, layout, null);
+            convertView = View.inflate(context, layout, null); //需要一个静态的Holder
             holder = new Holder(convertView);
             convertView.setTag(holder);
         }else {
             holder = (Holder) convertView.getTag();  //不能使用静态内部类,不然全是同样的视图
         }
         dataAndView(holder,getItem(position));
+        long endTime = System.nanoTime();
+        arrayList.add((int) (endTime-startTime)/1000);
+        for (int i = 0; i < arrayList.size(); i++) {
+            count +=arrayList.get(i);
+        }
+        LogUtil.e(arrayList.size()+"ping:"+count/arrayList.size());
+        count=0;
         return convertView;
     }
 
     protected abstract void dataAndView(Holder holder, T item);
 
 
-    protected  class Holder {
-        Holder holder;
+    protected static class Holder {
         View rootView;
-    SparseArray<View>  viewList = new SparseArray();
+        SparseArray<View>  viewList = new SparseArray();
         public Holder(View rootView) {
             this.rootView = rootView;
         }

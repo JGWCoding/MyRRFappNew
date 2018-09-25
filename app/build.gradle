@@ -17,10 +17,10 @@ android {
     }
     signingConfigs { //签名配置
         release {
-            storeFile file("../RRFapp.jks")
-            storePassword "qqqqqq"
-            keyAlias "rrf"
-            keyPassword "qqqqqq"
+            storeFile file("../ziweiyang.keystore")
+            storePassword "globalyang2014"
+            keyAlias "ziweiyang"
+            keyPassword "globalyang2014"
             v2SigningEnabled false
         }
     }
@@ -49,6 +49,9 @@ android {
                 variant.outputs.each { output ->
                     def outputFile = output.outputFile
                     if (outputFile != null && outputFile.name.endsWith('.apk')) {
+                        def fileName = "dev_测试_v${defaultConfig.versionName}_${defaultConfig.versionCode}_${releaseTime()}.apk"
+                        output.outputFile = new File(outputFile.parent, fileName)
+                    }else {
                         def fileName = "dev_测试_v${defaultConfig.versionName}_${defaultConfig.versionCode}_${releaseTime()}.apk"
                         output.outputFile = new File(outputFile.parent, fileName)
                     }
@@ -86,7 +89,8 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile 'com.android.support:appcompat-v7:25.3.1'
+    compile 'com.android.support:appcompat-v7:25.0.0'
+//    compile 'com.android.support:appcompat-v7:25.3.1'
     //大部分兼容包--->使用这个可以兼容版本下的android程序
     testCompile 'junit:junit:4.12'
     //测试用的junit框架
@@ -100,11 +104,11 @@ dependencies {
     //图片支持多点触控
     compile 'com.dou361.dialogui:jjdxm-dialogui:1.0.1'
     //dialog弹出框
-    compile 'com.tencent.bugly:crashreport:latest.release'
+//    compile 'com.tencent.bugly:crashreport:latest.release'
     //bug上传日志 ,没怎么用
     compile 'com.android.support:design:25.0.0'
     //使用了这里面的控件,一般使用了,MaterialDesign设计
     compile files('libs/ksoap2-android-assembly-3.6.2-jar-with-dependencies.jar') //请求网络框架
-    compile 'com.jakewharton:butterknife:8.6.0'
-    annotationProcessor 'com.jakewharton:butterknife-compiler:8.6.0'
+//    compile 'com.jakewharton:butterknife:8.6.0'
+//    annotationProcessor 'com.jakewharton:butterknife-compiler:8.6.0'
 }

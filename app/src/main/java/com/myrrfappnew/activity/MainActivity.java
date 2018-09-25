@@ -22,6 +22,7 @@ import com.myrrfappnew.bean.WorkInfo;
 import com.myrrfappnew.fragment.MyFragmentManger;
 import com.myrrfappnew.seriver.SyncService;
 import com.myrrfappnew.utils.AppUtils;
+import com.myrrfappnew.utils.DbHelper;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, RadioGroup.OnCheckedChangeListener {
 
@@ -47,11 +48,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private boolean isLog = false;//是否在log頁面
     private boolean isInit = true;//是否初始化
     private String workId;//id
-    //记录当前Fragment, -1是白头单 0是未到场 1是未完工 2是完工   -->index还与WorkInfo的state有一定关联
-    private int index = -1;
+    //记录当前Fragment, -1是白头单 0是未到场 1是未完工 2是完工 3是工作日志 4是签到  -->index还与WorkInfo的state有一定关联
+    public static int index = -1; //用来标记在哪个fragment页面
     private WorkInfo info;
     public static TextView countView;
-    private Intent intent;
+    private Intent intent;  //开启后台上传日志的意图
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +63,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //开启后台上传 --->没有上传的数据进行上传
         intent = new Intent(this, SyncService.class);
         startService(intent);
-        MyFragmentManger.showFragment(this,index);
+        DbHelper.getInstance().findAll();
+//        getSupportFragmentManager().beginTransaction().add(R.id.content_layout, WorkFragment.getInstance("53860030")).commit();
+        MyFragmentManger.showRootFragment(this, -1);
     }
 
     private void init() {
@@ -73,10 +76,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (BuildConfig.API_ENV_PRODUCTION.equals("951")) {
             titleTv.setText(getString(R.string.title_951, AppUtils.getVersion(this)));
             ivLogo.setImageResource(R.drawable.ic_logo951);
-        } else if(BuildConfig.API_ENV_PRODUCTION.equals("931")){
+        } else if (BuildConfig.API_ENV_PRODUCTION.equals("931")) {
             titleTv.setText(getString(R.string.title, AppUtils.getVersion(this)));
             ivLogo.setImageResource(R.drawable.ic_logo931);
-        }else {
+        } else {
             titleTv.setText("dev-测试");
             ivLogo.setImageResource(R.drawable.ic_logo931);
         }
@@ -114,7 +117,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
                 if (i == EditorInfo.IME_ACTION_SEARCH) {
                     // 当按了搜索之后关闭软键盘
-                    AppUtils.hideKeyboard(MainActivity.this,editSearch);
+                    AppUtils.hideKeyboard(MainActivity.this, editSearch);
                     search();
                     return true;
                 }
@@ -131,32 +134,38 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         });
     }
 
-    private void search() { //TODO 搜索本页面的数据
+    @Override
+    protected void onResume() {
+        super.onResume();
+        AppUtils.hideKeyboard(MainActivity.this, editSearch);
+    }
+
+    private void search() {
         MyFragmentManger.search(editSearch.getText().toString());
     }
 
     @Override
-    public void onClick(View v) { //TODO 点击事件
+    public void onClick(View v) { // 点击事件
         switch (v.getId()) {
             case R.id.iv_search:    //点击搜索
                 search();
-                AppUtils.hideKeyboard(this,editSearch);
+                AppUtils.hideKeyboard(this, editSearch);
                 break;
             case R.id.tv_explain:   //点击说明 -->跳转到说明页面
                 startActivity(new Intent(this, ExplainActivity.class));
                 break;
-            case R.id.tv_refresh:     //TODO 点击刷新页面
+            case R.id.tv_refresh:     // 点击刷新页面
                 MyFragmentManger.fragmentRefresh();
                 break;
-            case R.id.iv_add:  //TODO 点击添加白头单
-
+            case R.id.iv_add:  //点击添加白头单
+                MyFragmentManger.showFragment(this, 7, null);
                 break;
         }
     }
 
     @Override
-    public void onCheckedChanged(RadioGroup group, int checkedId) { //TODO 改变radioButton点击位置后作出相应变化
-        //改变箭头位置 ---改变里面的内容
+    public void onCheckedChanged(RadioGroup group, int checkedId) {
+        editSearch.setText("");
         countView.setVisibility(View.VISIBLE); //显示查询的数据条目
         tvMatch.setVisibility(View.GONE); //配对白头单
         ivAdd.setVisibility(View.GONE); //添加白头单
@@ -165,25 +174,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             ivArrow.setTranslationX(radioWhiteHead.getX() + radioWhiteHead.getWidth() / 2 - ivArrow.getWidth() / 2);
             index = -1;
             tvMatch.setVisibility(View.VISIBLE);
-           ivAdd.setVisibility(View.VISIBLE);
-        }else if(checkedId == radioNotGo.getId()) {
+            ivAdd.setVisibility(View.VISIBLE);
+        } else if (checkedId == radioNotGo.getId()) {
             isInit = false;
             ivArrow.setTranslationX(radioNotGo.getX() + radioNotGo.getWidth() / 2 - ivArrow.getWidth() / 2);
             index = 0;
-        }else if(checkedId == radioNotComplete.getId()) {
+        } else if (checkedId == radioNotComplete.getId()) {
             isInit = false;
             ivArrow.setTranslationX(radioNotComplete.getX() + radioNotComplete.getWidth() / 2 - ivArrow.getWidth() / 2);
             index = 1;
-        }else if(checkedId == radioComplete.getId()) {
+        } else if (checkedId == radioComplete.getId()) {
             isInit = false;
             ivArrow.setTranslationX(radioComplete.getX() + radioComplete.getWidth() / 2 - ivArrow.getWidth() / 2);
             index = 2;
-        }else{
+        } else {
             countView.setVisibility(View.GONE);
             ivArrow.setTranslationX(radioLog.getX() + radioLog.getWidth() / 2 - ivArrow.getWidth() / 2);
             index = 3;
         }
-        MyFragmentManger.showFragment(this,index); //显示一个Fragment
+        MyFragmentManger.showRootFragment(this, index); //显示一个Fragment
         layoutSearch.setVisibility(View.VISIBLE);
         layoutCrn.setVisibility(View.GONE);
         layoutAddress.setVisibility(View.GONE);
@@ -191,10 +200,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
+    public void onBackPressed() {
+        if (index > 3 || index < -1) { //不在根页面
+            if (index == 4) { //在签到页面
+                MyFragmentManger.showFragment(this, MyFragmentManger.rootInterface, MyFragmentManger.id);
+            } else if (index == 5) {
+                MyFragmentManger.showFragment(this, 4, MyFragmentManger.id);
+            }
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (intent!=null) {
+        if (intent != null) {
             stopService(intent);
         }
+        System.exit(0);
     }
 }

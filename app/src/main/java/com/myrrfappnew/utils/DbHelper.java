@@ -26,22 +26,14 @@ import static com.myrrfappnew.utils.FileUtils.context;
  */
 public class DbHelper {
     private static DbHelper instance;
-    /**
-     * 数据库对象
-     */
+    /**数据库对象*/
     private DaoConfig daoConfig;
 
-    /**
-     * 数据库管理工具
-     */
+    /**数据库管理工具*/
     private DbManager db;
-    private Runnable runnable;
 
-    /**
-     * 初始化
-     */
+    /**初始化*/
     private DbHelper() {
-
         daoConfig = getDaoConfig(context);
         db = x.getDb(daoConfig);
     }
@@ -111,9 +103,7 @@ public class DbHelper {
     public void deleteDB() throws Exception {
         db.dropDb();
     }
-    /**
-     * 单例模式创建数据库工具类对象
-     */
+    /**单例模式创建数据库工具类对象*/
     public static DbHelper getInstance() {
         if (instance == null) {
             instance = new DbHelper();
@@ -128,10 +118,22 @@ public class DbHelper {
             e.printStackTrace();
         }
     }
-    public void deleteList(List<WorkInfo> list) {
+    public void findAll() {
         try {
-            if (list != null)
-                db.delete(list);
+            List<WorkInfo> workInfos = db.findAll(WorkInfo.class);
+            for (int i = 0; i < workInfos.size(); i++) {
+                WorkInfo info = workInfos.get(i);
+                LogUtil.e("+++"+info.toString());
+            }
+            List<WorkLogBean> workLogBeanList = db.findAll(WorkLogBean.class);
+            for (int j = 0; j < workLogBeanList.size(); j++) {
+                WorkLogBean workLogBean = workLogBeanList.get(j);
+                LogUtil.e("+++"+workLogBean.toString());
+                if (workLogBean.getUpload()==0) {
+                    LogUtil.e("+++=="+workLogBean.toString());
+                }
+            }
+
         } catch (DbException e) {
             e.printStackTrace();
         }
@@ -202,8 +204,7 @@ public class DbHelper {
 
     /**
      * 根據關鍵字查詢任務列表
-     *
-     * @param state 任务状态 1未到场 2未完工 3.已完工
+     * @param state 任务状态 1未到场state-->0 2未完工state-->1 3.已完工state-->2
      * @return
      */
     public List<WorkInfo> searchWorkList(int state, String key) {
@@ -211,19 +212,20 @@ public class DbHelper {
         try {
             WhereBuilder whereBuilder = WhereBuilder.b();
             whereBuilder.and("isWhiteHead", "=", 0).or("isWhiteHead", "=", null);
-            return db.selector(WorkInfo.class).where("workId", "LIKE", "%" + key + "%").and("state", "=", state).findAll();
+            return db.selector(WorkInfo.class).where("workId", "LIKE", "%" + key + "%").and("state", "=", state).and(whereBuilder).findAll();
         } catch (DbException e) {
             e.printStackTrace();
         }
         return null;
     }
+
     public List<WorkInfo> getNotWhiteHead() {
         try {
             WhereBuilder whereBuilder = WhereBuilder.b();
             whereBuilder.and("isWhiteHead", "=", 0).or("isWhiteHead", "=", null);
             List<WorkInfo> workInfos = db.selector(WorkInfo.class).where(whereBuilder).findAll();
             if (workInfos != null) {
-                for (int i = 0; i < workInfos.size(); i++) {
+                for (int i = 0; i < workInfos.size(); i++) { //如果有未上传的log日志的id,那这个workInfo也设置为未上传
                     if (getNotUploadLog(workInfos.get(i).getWorkId()) > 0) {
                         workInfos.get(i).setUpload(0); //设置未上传
                     }
@@ -469,21 +471,21 @@ public class DbHelper {
  */
 
     public int actionLog(WorkLogBean row) {
+        Cursor c = null;
         try {
             if (db.saveBindingId(row)) {
-
-                Cursor c = db.execQuery("select max(id) from log ");
-
+                c = db.execQuery("select max(id) from log ");
                 c.moveToFirst();
-                LogUtil.i("-----4444444444444444444----返回ID為:" + c.getInt(0));
                 return c.getInt(0);
             }
-
-
-        } catch (DbException e) {
+        } catch (Exception e) {
             e.printStackTrace();
+        }finally {
+            if (c!=null) {
+                c.close();
+            }
         }
-        return 0;
+            return 0;
     }
     /*
 
@@ -496,8 +498,6 @@ public class DbHelper {
             Cursor c = db.execQuery("select upload from log where id=" + _id);
             c.moveToFirst();
             LogUtil.i("-----4444444444444444444----update狀態:" + c.getInt(0));
-
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -527,8 +527,6 @@ public class DbHelper {
     public void addLog(WorkLogBean bean) {
         try {
             db.saveBindingId(bean);
-
-
         } catch (DbException e) {
             e.printStackTrace();
         }
@@ -623,49 +621,6 @@ public class DbHelper {
             e.printStackTrace();
         }
         return 0;
-    }
-
-    /**
-     * 保存日志
-     *
-     * @param state
-     */
-
-
-    public static WorkLogBean writeLog(String workId, int state, String imgPath) {
-        WorkLogBean bean = new WorkLogBean();
-        bean.setWorkId(workId);
-        bean.setWorkState(state);
-        String desc = "";
-        switch (state) {
-            case 1:
-                desc = "報到場";
-                break;
-            case 2:
-                desc = "報到場拍照";
-                bean.setImgUrls(imgPath);
-                break;
-            case 3:
-                desc = "未完工";
-                break;
-            case 4:
-                desc = "完工";
-                break;
-            case 5:
-                desc = "完工拍照";
-                bean.setImgUrls(imgPath);
-                break;
-            case 6:
-                desc = "開始影像";
-                bean.setImgUrls(imgPath);
-                break;
-        }
-        bean.setDesc(desc);
-        bean.setCreatDate(AppUtils.getDate());
-        bean.setTime(AppUtils.getTime());
-        int id = DbHelper.getInstance().actionLog(bean);
-        bean.setId(id);
-        return bean;
     }
 
     /**
